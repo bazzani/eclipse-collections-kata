@@ -789,7 +789,7 @@ Get counts by pet type
 @Test
 public void getCountsByPetType()
 {
-  MutableBag<PetType> counts =
+  Bag<PetType> counts =
     this.people.flatCollect(Person::getPets).countBy(Pet::getType);
 
   Assert.assertEquals(2, counts.occurrencesOf(PetType.CAT));
