@@ -74,21 +74,14 @@ public class Exercise4Test extends PetDomainForKata
     public void streamsToECRefactor1()
     {
         //find Bob Smith
-        Person person =
-                this.people.stream()
-                        .filter(each -> each.named("Bob Smith"))
-                        .findFirst().get();
+        Person person = this.people
+                .detect(p -> p.named("Bob Smith"));
 
         //get Bob Smith's pets' names
-        String names =
-                person.getPets().stream()
-                        .map(Pet::getName)
-                        .collect(Collectors.joining(" & "));
+        String names = person.getPets()
+                .collect(Pet::getName).makeString(" & ");
 
         Assert.assertEquals("Dolly & Spot", names);
-
-        // Don't forget to comment this out or delete it when you are done
-        Assert.fail("Refactor to Eclipse Collections");
     }
 
     @Test
