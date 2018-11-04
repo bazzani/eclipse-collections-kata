@@ -16,11 +16,17 @@ import java.util.Comparator;
 import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.list.primitive.IntList;
+import org.eclipse.collections.api.set.MutableSet;
+import org.eclipse.collections.api.set.primitive.IntSet;
+import org.eclipse.collections.api.set.primitive.MutableBooleanSet;
+import org.eclipse.collections.api.set.primitive.MutableIntSet;
 import org.eclipse.collections.impl.factory.Sets;
+import org.eclipse.collections.impl.factory.primitive.BooleanSets;
+import org.eclipse.collections.impl.factory.primitive.IntSets;
 import org.eclipse.collections.impl.list.mutable.FastList;
 import org.eclipse.collections.impl.test.Verify;
 import org.junit.Assert;
@@ -36,32 +42,32 @@ public class Exercise4Test extends PetDomainForKata
     {
         // Try to use a MutableIntList here instead
         // Hints: flatMap = flatCollect, map = collect, mapToInt = collectInt
-        MutableList<Integer> petAges = this.people
-                .stream()
-                .flatMap(person -> person.getPets().stream())
-                .map(pet -> pet.getAge())
-                .collect(Collectors.toCollection(FastList::new));
+        IntList petAges = this.people
+                .flatCollect(Person::getPets)
+                .collectInt(Pet::getAge);
 
         // Try to use an IntSet here instead
-        Set<Integer> uniqueAges = petAges.toSet();
+        IntSet uniqueAges = petAges.toSet();
+
         // IntSummaryStatistics is a class in JDK 8 - Try and use it with MutableIntList.forEach()
-        IntSummaryStatistics stats = petAges.stream().mapToInt(i -> i).summaryStatistics();
+        IntSummaryStatistics stats = petAges.summaryStatistics();
+
         // Is a Set<Integer> equal to an IntSet?
         // Hint: Try IntSets instead of Sets as the factory
-        Assert.assertEquals(Sets.mutable.with(1, 2, 3, 4), uniqueAges);
-        // Try to leverage min, max, sum, average from the Eclipse Collections primitive api
-        Assert.assertEquals(stats.getMin(), petAges.stream().mapToInt(i -> i).min().getAsInt());
-        Assert.assertEquals(stats.getMax(), petAges.stream().mapToInt(i -> i).max().getAsInt());
-        Assert.assertEquals(stats.getSum(), petAges.stream().mapToInt(i -> i).sum());
-        Assert.assertEquals(stats.getAverage(), petAges.stream().mapToInt(i -> i).average().getAsDouble(), 0.0);
-        Assert.assertEquals(stats.getCount(), petAges.size());
-        // Hint: Match = Satisfy
-        Assert.assertTrue(petAges.stream().allMatch(i -> i > 0));
-        Assert.assertFalse(petAges.stream().anyMatch(i -> i == 0));
-        Assert.assertTrue(petAges.stream().noneMatch(i -> i < 0));
+        IntSet setOfInts = IntSets.mutable.with(1, 2, 3, 4);
+        Assert.assertEquals(setOfInts, uniqueAges);
 
-        // Don't forget to comment this out or delete it when you are done
-        Assert.fail("Refactor to Eclipse Collections");
+        // Try to leverage min, max, sum, average from the Eclipse Collections primitive api
+        Assert.assertEquals(stats.getMin(), petAges.min());
+        Assert.assertEquals(stats.getMax(), petAges.max());
+        Assert.assertEquals(stats.getSum(), petAges.sum());
+        Assert.assertEquals(stats.getAverage(), petAges.average(), 0.0);
+        Assert.assertEquals(stats.getCount(), petAges.size());
+
+        // Hint: Match = Satisfy
+        Assert.assertTrue(petAges.allSatisfy(i -> i > 0));
+        Assert.assertFalse(petAges.anySatisfy(i -> i == 0));
+        Assert.assertTrue(petAges.noneSatisfy(i -> i < 0));
     }
 
     @Test
