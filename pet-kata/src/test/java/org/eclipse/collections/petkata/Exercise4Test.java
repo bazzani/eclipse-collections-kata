@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.collections.api.bag.Bag;
+import org.eclipse.collections.api.bag.MutableBag;
 import org.eclipse.collections.api.block.predicate.primitive.IntPredicate;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.list.primitive.IntList;
@@ -34,6 +36,8 @@ import org.eclipse.collections.impl.set.mutable.primitive.IntHashSet;
 import org.eclipse.collections.impl.test.Verify;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * In this set of tests, wherever you see .stream() replace it with an Eclipse Collections alternative.
@@ -95,21 +99,17 @@ public class Exercise4Test extends PetDomainForKata
     public void streamsToECRefactor2()
     {
         // Hint: Try to replace the Map<PetType, Long> with a Bag<PetType>
-        Map<PetType, Long> countsStream =
-                Collections.unmodifiableMap(
-                        this.people.stream()
-                                .flatMap(person -> person.getPets().stream())
-                                .collect(Collectors.groupingBy(Pet::getType,
-                                        Collectors.counting())));
-        Assert.assertEquals(Long.valueOf(2L), countsStream.get(PetType.CAT));
-        Assert.assertEquals(Long.valueOf(2L), countsStream.get(PetType.DOG));
-        Assert.assertEquals(Long.valueOf(2L), countsStream.get(PetType.HAMSTER));
-        Assert.assertEquals(Long.valueOf(1L), countsStream.get(PetType.SNAKE));
-        Assert.assertEquals(Long.valueOf(1L), countsStream.get(PetType.TURTLE));
-        Assert.assertEquals(Long.valueOf(1L), countsStream.get(PetType.BIRD));
+        Bag<PetType> petCounts = this.people
+                .asUnmodifiable()
+                .flatCollect(Person::getPets)
+                .countBy(Pet::getType);
 
-        // Don't forget to comment this out or delete it when you are done
-        Assert.fail("Refactor to Eclipse Collections");
+        Assert.assertEquals(2, petCounts.occurrencesOf(PetType.CAT));
+        Assert.assertEquals(2, petCounts.occurrencesOf(PetType.DOG));
+        Assert.assertEquals(2, petCounts.occurrencesOf(PetType.HAMSTER));
+        Assert.assertEquals(1, petCounts.occurrencesOf(PetType.SNAKE));
+        Assert.assertEquals(1, petCounts.occurrencesOf(PetType.TURTLE));
+        Assert.assertEquals(1, petCounts.occurrencesOf(PetType.BIRD));
     }
 
     /**
