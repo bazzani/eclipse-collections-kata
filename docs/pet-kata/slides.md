@@ -988,7 +988,8 @@ public void streamsToECRefactor3()
     .asLazy()
     .flatCollect(Person::getPets)
     .countBy(Pet::getType)
-    .topOccurrences(3);
+    .topOccurrences(3)
+    .toList();
 
   Verify.assertSize(3, favorites);
   Verify.assertContains(PrimitiveTuples.pair(PetType.CAT, 2), favorites);
