@@ -789,7 +789,7 @@ Get counts by pet type
 @Test
 public void getCountsByPetType()
 {
-  MutableBag<PetType> counts =
+  Bag<PetType> counts =
     this.people.flatCollect(Person::getPets).countBy(Pet::getType);
 
   Assert.assertEquals(2, counts.occurrencesOf(PetType.CAT));
@@ -993,7 +993,8 @@ public void streamsToECRefactor3()
   MutableList<ObjectIntPair<PetType>> favorites = this.people
     .flatCollect(Person::getPets)
     .countBy(Pet::getType)
-    .topOccurrences(3);
+    .topOccurrences(3)
+    .toList();
 
   Verify.assertSize(3, favorites);
   Verify.assertContains(PrimitiveTuples.pair(PetType.CAT, 2), favorites);
